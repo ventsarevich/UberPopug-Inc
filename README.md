@@ -11,6 +11,7 @@ Async architecture homeworks
 - Task service: [сервис задач, который используется для менеджмента задач](initial-architecture/services/task-service.md)
 - Account service: [сервис счетов](initial-architecture/services/account-service.md)
 - Analytics service: [сервис аналитики](initial-architecture/services/analitics-service.md)
+- Event service: [отправка emails](initial-architecture/services/email-service.md)
 
 ### Авторизация
 
