@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            width: 100%;
+            height: 100%;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-align: center;
+            align-items: center;
+        }
+
+        .form-signup {
+            width: 100%;
+            max-width: 330px;
+            padding: 15px;
+            margin: auto;
+        }
+
+        .form-signup .checkbox {
+            font-weight: 400;
+        }
+
+        .form-signup .form-control {
+            position: relative;
+            box-sizing: border-box;
+            height: auto;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .form-signup .form-control:focus {
+            z-index: 2;
+        }
+
+        .form-signup input[type="text"] {
+            margin-bottom: -1px;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        .form-signup input[type="password"] {
+            margin-bottom: -1px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+
+        .form-signup .has-error {
+            color: red;
+        }
+    </style>
+    <script>
+      function backToLoginPage() {
+        window.location.href = "/sso/login" + document.location.search;
+      }
+    </script>
+    <title>Sign Up</title>
+</head>
+<body class="text-center">
+<form class="form-signup" method="post">
+    <h1 class="h3 mb-3 font-weight-normal">SSO server sign up</h1>
+    <label for="inputEmail">Username</label>
+    <input type="text" name="username" value="<%= username; %>" id="inputEmail" class="form-control"
+           placeholder="Username" required autofocus>
+    <label for="inputEmail">Email</label>
+    <input type="email" name="email" value="<%= email; %>" id="inputEmail" class="form-control"
+           placeholder="Email" required>
+    <label for="inputPassword">Password</label>
+    <input type="password" name="password" value="<%= password; %>" id="inputPassword" class="form-control"
+           placeholder="Password" required minlength="6">
+    <label for="inputPasswordConfirmation">Password confirmation</label>
+    <input type="password" name="confirmationPassword" value="<%= confirmationPassword; %>"
+           id="inputPasswordConfirmation" class="form-control" placeholder="Password confirmation" required
+           minlength="6">
+    <div class="checkbox mb-3">
+        <% if(!!error){ %>
+            <span class="has-error"><%= error %></span>
+        <% } %>
+    </div>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+    <br>
+    <button class="btn btn-link" onclick="backToLoginPage()">Back to login page</button>
+</form>
+</body>
+</html>
