@@ -23,18 +23,18 @@ const updateUser = async (payload) => {
   const user = await userService.findById(payload._id);
   if (!user) return null;
 
-  const updatedUser = await userService.update(payload);
+  await userService.update(payload);
 
-  if (user.role !== updatedUser.role) {
+  if (user.role !== payload.role) {
     const event = {
       type: BUSINESS_EVENT.USER_ROLE_CHANGED,
-      data: { publicId: updatedUser.publicId, role: updatedUser.role }
+      data: { publicId: user.publicId, role: payload.role }
     };
 
     await sendMessages(TOPIC.USERS, [event]);
   }
 
-  return updatedUser;
+  return user;
 };
 
 const createUser = async ({ password, confirmationPassword, email, username }) => {
