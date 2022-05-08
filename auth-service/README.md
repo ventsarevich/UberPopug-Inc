@@ -1,6 +1,14 @@
-# Tasks service
+# Auth service
 
 This service is used as SSO service
+
+## Run
+
+Default port: 8010
+
+```npm i```
+
+```npm start```
 
 ## Possible improvements:
 

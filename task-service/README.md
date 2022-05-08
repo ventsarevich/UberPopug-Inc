@@ -2,6 +2,14 @@
 
 This service is used to process tasks
 
+## Run
+
+Default port: 8010
+
+```npm i```
+
+```npm start```
+
 ## Possible improvements:
 
 1. Create event handler to process events from queue

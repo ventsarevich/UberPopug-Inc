@@ -1,0 +1,97 @@
+version: '3.3'
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:5.4.1
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  broker:
+    image: confluentinc/cp-server:5.4.1
+    hostname: broker
+    container_name: broker
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: broker:29092
+      CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: zookeeper:2181
+      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
+      CONFLUENT_METRICS_ENABLE: 'true'
+      CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
+
+  kowl:
+    image: quay.io/cloudhut/kowl:master-1d07695
+    restart: on-failure
+    entrypoint: /bin/sh
+    command: -c "echo \"$$KOWL_CONFIG_FILE\" > /tmp/config.yml; /app/kowl"
+    environment:
+      CONFIG_FILEPATH: /tmp/config.yml
+      KOWL_CONFIG_FILE: |
+        kafka:
+          brokers: ["broker:29092"]
+    ports:
+      - "8080:8080"
+    depends_on:
+      - broker
+
+  auth-service-redis:
+    image: redis:latest
+    restart: always
+    container_name: auth-service-redis
+    ports:
+      - '6380:6379'
+    command: redis-server --save 60 1 --loglevel warning
+
+  auth-service-mongodb:
+    image: mongo:latest
+    container_name: auth-service-mongodb
+    ports:
+      - '27018:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+
+  auth-service-mongodb-setup:
+    image: mongo:latest
+    container_name: auth-service-mongodb-setup
+    volumes:
+      - ./auth-service/dump:/dump
+    entrypoint: [ "mongorestore", "--uri", "mongodb://admin:admin@auth-service-mongodb:27017/auth-service?authSource=admin", "/dump" ]
+    depends_on:
+      - auth-service-mongodb
+
+  task-service-mongodb:
+    image: mongo:latest
+    container_name: task-service-mongodb
+    ports:
+      - '27019:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+
+  task-service-mongodb-setup:
+    image: mongo:latest
+    container_name: task-service-mongodb-setup
+    volumes:
+      - ./task-service/dump:/dump
+    entrypoint: [ "mongorestore", "--uri", "mongodb://admin:admin@task-service-mongodb:27017/task-service?authSource=admin", "/dump" ]
+    depends_on:
+      - task-service-mongodb
+
+
+
