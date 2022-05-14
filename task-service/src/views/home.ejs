@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home page</title>
+</head>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <span class="navbar-brand">Tasks</span>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="#"><span class="sr-only">(current)</span></a>
+            </li>
+        </ul>
+        <button type="button" class="btn btn-outline-success my-2 my-sm-0" data-toggle="modal"
+                data-target="#create-task-modal">
+            Create Task
+        </button>
+        <% if(shuffle) { %>
+            <form method="post" action="/tasks/shuffle" id=remove-form">
+                <button type="submit" class="btn btn-outline-success my-2 my-sm-0">
+                    Shuffle Task
+                </button>
+            </form>
+        <% } %>
+    </div>
+</nav>
+
+<form method="post" action="/tasks/create" id="create-form">
+    <div class="modal fade" tabindex="-1" role="dialog" id="create-task-modal"
+         aria-labelledby="createInstanceLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createInstanceLabel">Create Task</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label for="inputDescription">Description</label>
+                    <input type="text" name="description" id="inputDescription"
+                           class="form-control" placeholder="Description" required autofocus>
+                    <label for="assigneeSelect">Assignee</label>
+                    <select class="custom-select form-control" name="assignee" id="assigneeSelect" required>
+                        <% for (var user of users) { %>
+                            <option value="<%= user.publicId; %>"><%= user.username; %></option>
+                        <% } %>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-danger">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">UID</th>
+        <th scope="col">Description</th>
+        <th scope="col">Status</th>
+        <th scope="col">Creator</th>
+        <th scope="col">Assignee</th>
+        <th scope="col">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    <% for (var task of tasks) { %>
+        <tr id="<%= task._id; %>">
+            <th scope="row"><%= task._id; %></th>
+            <td><%= task.description; %></td>
+            <td><%= task.status; %></td>
+            <td><%= task.creator.username; %></td>
+            <td><%= task.assignee.username; %></td>
+            <td>
+                <% if(task.creator.publicId === currentUserId) { %>
+                    <button class="btn btn-link" data-toggle="modal" data-target="#<%= task._id; %>-edit-modal">
+                        Edit
+                    </button>
+                <% } %>
+                <% if(task.assignee.publicId === currentUserId && task.status !== 'completed') { %>
+                    <button class="btn btn-link" data-toggle="modal" data-target="#<%= task._id; %>-remove-modal">
+                        Mark as completed
+                    </button>
+                <% } %>
+            </td>
+        </tr>
+
+        <form method="post" action="/tasks/complete" id="<%= task._id; %>-remove-form">
+            <div class="modal fade" tabindex="-1" role="dialog" id="<%= task._id; %>-remove-modal"
+                 aria-labelledby="editInstanceLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editInstanceLabel">Complete task</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <span>Are you finished this task?</span>
+                            <input type="text" class="form-control" name="_id" id="_id"
+                                   value="<%= task._id; %>" readonly/>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-danger">Confirm</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <form method="post" action="/tasks/update" id="<%= task._id; %>-edit-form">
+            <div class="modal fade" tabindex="-1" role="dialog" id="<%= task._id; %>-edit-modal"
+                 aria-labelledby="editInstanceLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editInstanceLabel">Edit Task</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <label for="_id">UID</label>
+                            <input type="text" class="form-control" name="_id" id="_id"
+                                   value="<%= task._id; %>" readonly/>
+                            <label for="inputDescription">Description</label>
+                            <input type="text" value="<%= task.description; %>" name="description" id="inputDescription"
+                                   class="form-control" placeholder="Description" required autofocus>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    <% } %>
+    </tbody>
+</table>
+</body>
+</html>

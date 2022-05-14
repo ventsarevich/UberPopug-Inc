@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+    <style>
+        body {
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <span class="navbar-brand">Auth</span>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Instances<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/user">Users</a>
+            </li>
+        </ul>
+        <button type="button" class="btn btn-outline-success my-2 my-sm-0" data-toggle="modal"
+                data-target="#create-modal">
+            Create Instance
+        </button>
+    </div>
+</nav>
+
+<form method="post" action="/instances/create" id="create-form">
+    <div class="modal fade" tabindex="-1" role="dialog" id="create-modal"
+         aria-labelledby="createInstanceLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createInstanceLabel">Create Instance</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label for="inputName">Name</label>
+                    <input type="text" name="name" id="inputName"
+                           class="form-control" placeholder="Name" required autofocus>
+                    <label for="inputUrl">Redirect URL</label>
+                    <input type="text" name="url" id="inputUrl"
+                           class="form-control" placeholder="Redirect URL" required>
+                    <label for="inputSecret">Secret</label>
+                    <input type="text" name="secret" id="inputSecret"
+                           class="form-control" placeholder="Secret" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-danger">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<main>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">UID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Redirect Url</th>
+            <th scope="col">Secret</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <% for (var instance of instances) { %>
+            <tr id="<%= instance._id; %>">
+                <th scope="row"><%= instance._id; %></th>
+                <td><%= instance.name; %></td>
+                <td><%= instance.url; %></td>
+                <td><%= instance.secret; %></td>
+                <td>
+                    <button class="btn btn-link" data-toggle="modal" data-target="#<%= instance._id; %>-edit-modal">
+                        Edit
+                    </button>
+                    <button class="btn btn-danger" data-toggle="modal" data-target="#<%= instance._id; %>-remove-modal">
+                        Remove
+                    </button>
+                </td>
+            </tr>
+
+            <form method="post" action="/instances/delete" id="<%= instance._id; %>-remove-form">
+                <div class="modal fade" tabindex="-1" role="dialog" id="<%= instance._id; %>-remove-modal"
+                     aria-labelledby="editInstanceLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editInstanceLabel">Remove Instance</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <span>Instance will be deleted</span>
+                                <input type="text" class="form-control" name="_id" id="_id"
+                                       value="<%= instance._id; %>" readonly/>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-danger">Confirm</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <form method="post" action="/instances/update" id="<%= instance._id; %>-edit-form">
+                <div class="modal fade" tabindex="-1" role="dialog" id="<%= instance._id; %>-edit-modal"
+                     aria-labelledby="editInstanceLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editInstanceLabel">Edit Instance</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <label for="_id">UID</label>
+                                <input type="text" class="form-control" name="_id" id="_id"
+                                       value="<%= instance._id; %>" readonly/>
+                                <label for="inputName">Name</label>
+                                <input type="text" value="<%= instance.name; %>" name="name" id="inputName"
+                                       class="form-control" placeholder="Name" required autofocus>
+                                <label for="inputUrl">Redirect URL</label>
+                                <input type="text" value="<%= instance.url; %>" name="url" id="inputUrl"
+                                       class="form-control" placeholder="Redirect URL" required>
+                                <label for="inputSecret">Secret</label>
+                                <input type="text" value="<%= instance.secret; %>" name="secret" id="inputSecret"
+                                       class="form-control" placeholder="Secret" required>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        <% } %>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>
