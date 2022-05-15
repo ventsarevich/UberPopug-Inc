@@ -27,12 +27,13 @@ const reassignTasks = async (tasksQuery) => {
 
     const event = {
       id: uuidv4(),
-      version: 1,
+      version: 2,
       time: new Date(),
       producer: 'task-service-producer',
       type: CUD_EVENT.TASK_UPDATED,
       data: {
         publicId: task.publicId,
+        jiraId: task.jiraId,
         assignee_public_id: task.assignee
       }
     };
@@ -74,6 +75,7 @@ const getTasks = async (currentUser) => {
     return {
       _id: task._id,
       status: task.status,
+      jiraId: task.jiraId,
       description: task.description,
       creator: { publicId: creator.publicId, username: creator.username },
       assignee: { publicId: assignee.publicId, username: assignee.username }
@@ -86,7 +88,7 @@ const createTask = async ({ description, assignee, creator }) => {
 
   const event = {
     id: uuidv4(),
-    version: 1,
+    version: 2,
     time: new Date(),
     producer: 'task-service-producer',
     type: BUSINESS_EVENT.TASK_ADDED,
@@ -94,7 +96,8 @@ const createTask = async ({ description, assignee, creator }) => {
       publicId: createdTask.publicId,
       description: createdTask.description,
       assignee_public_id: createdTask.assignee,
-      creator_public_id: createdTask.creator
+      creator_public_id: createdTask.creator,
+      jiraId: createdTask.jiraId
     }
   };
 
@@ -114,12 +117,13 @@ const updateTask = async (payload) => {
 
   const event = {
     id: uuidv4(),
-    version: 1,
+    version: 2,
     time: new Date(),
     producer: 'task-service-producer',
     type: CUD_EVENT.TASK_UPDATED,
     data: {
       publicId: task.publicId,
+      jiraId: task.jiraId,
       description: payload.description
     }
   };

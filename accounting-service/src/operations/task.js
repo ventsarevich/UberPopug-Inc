@@ -85,10 +85,18 @@ const processQueueMessage = async (message) => {
   try {
     switch ([value.type, value.version].join(' ')) {
       case `${CONSUMING_EVENT.TASK_UPDATED} 1`:
+      case `${CONSUMING_EVENT.TASK_UPDATED} 2`:
+        if (value.version === 2) {
+          value.data.description = `[${value.data.jiraId}] - ${value.data.description}`;
+        }
         return updateTask(value);
       case `${CONSUMING_EVENT.TASK_COMPLETED} 1`:
         return completeTask(value);
       case `${CONSUMING_EVENT.TASK_ADDED} 1`:
+      case `${CONSUMING_EVENT.TASK_ADDED} 2`:
+        if (value.version === 2) {
+          value.data.description = `[${value.data.jiraId}] - ${value.data.description}`;
+        }
         return addTask(value);
       default:
         return null;
