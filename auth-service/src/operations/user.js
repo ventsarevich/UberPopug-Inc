@@ -37,6 +37,8 @@ const updateUser = async (payload) => {
 
   await userService.update(payload);
 
+  console.log(user.role);
+  console.log(payload.role);
   if (user.role !== payload.role) {
     const event = {
       id: uuidv4(),
@@ -84,7 +86,7 @@ const createUser = async ({ password, confirmationPassword, email, username }) =
   if (isValid) {
     await sendMessages(TOPIC.USERS_STREAM, [event]);
   } else {
-    console.log(`${CUD_EVENT.USER_CREATE} send is rejected`, error);
+    console.log(`${CUD_EVENT.USER_CREATED} send is rejected`, error);
   }
 
   return createdUser;

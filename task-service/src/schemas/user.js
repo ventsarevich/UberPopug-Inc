@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const { ROLE } = require('../constants/role');
-const { USER_STATUS } = require('../constants/userStatus');
+const { USER_STATUS } = require('../constants/user-status');
 
 const User = new mongoose.Schema({
   _id: { type: String, required: true },

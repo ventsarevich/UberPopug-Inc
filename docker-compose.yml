@@ -93,5 +93,20 @@ services:
     depends_on:
       - task-service-mongodb
 
+  accounting-service-mongodb:
+    image: mongo:latest
+    container_name: accounting-service-mongodb
+    ports:
+      - '27020:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
 
-
+  accounting-service-mongodb-setup:
+    image: mongo:latest
+    container_name: accounting-service-mongodb-setup
+    volumes:
+      - ./accounting-service/dump:/dump
+    entrypoint: [ "mongorestore", "--uri", "mongodb://admin:admin@accounting-service-mongodb:27017/accounting-service?authSource=admin", "/dump" ]
+    depends_on:
+      - accounting-service-mongodb

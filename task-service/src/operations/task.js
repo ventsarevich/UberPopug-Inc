@@ -7,7 +7,7 @@ const userService = require('../services/user');
 const { TOPIC } = require('../constants/topic');
 const { STATUS } = require('../constants/status');
 const { sendMessages } = require('../queue/producer');
-const { USER_STATUS } = require('../constants/userStatus');
+const { USER_STATUS } = require('../constants/user-status');
 const { CUD_EVENT, BUSINESS_EVENT, CONSUMING_EVENT } = require('../constants/event');
 
 const reassignTasks = async (tasksQuery) => {
