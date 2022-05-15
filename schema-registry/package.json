@@ -1,0 +1,20 @@
+{
+  "version": "1.0.5",
+  "name": "@ventsarevich/shema-registry",
+  "description": "Schema registry for UberPopug-Inc",
+  "main": "src/app.js",
+  "author": {
+    "name": "ventsarevich",
+    "email": "uladzislau.vintsarevich@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ventsarevich/UberPopug-Inc"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "dependencies": {
+    "joi": "^17.6.0"
+  }
+}

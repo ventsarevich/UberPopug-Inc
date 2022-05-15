@@ -15,7 +15,7 @@ const initUsersConsumer = async () => {
   const usersConsumer = kafka.consumer({ groupId: config.KAFKA_USERS_CONSUMER_GROUP_ID });
 
   await usersConsumer.connect();
-  await usersConsumer.subscribe({ topics: [TOPIC.USERS_STREAM, TOPIC.USERS], fromBeginning: true });
+  await usersConsumer.subscribe({ topics: [TOPIC.USERS_STREAM, TOPIC.USERS_ROLE_CHANGED], fromBeginning: true });
 
   return usersConsumer.run({
     eachMessage: async ({ message }) => userOperations.processQueueMessage(message)
@@ -26,7 +26,7 @@ const initTasksConsumer = async () => {
   const tasksConsumer = kafka.consumer({ groupId: config.KAFKA_TASKS_CONSUMER_GROUP_ID });
 
   await tasksConsumer.connect();
-  await tasksConsumer.subscribe({ topics: [TOPIC.TASKS], fromBeginning: true });
+  await tasksConsumer.subscribe({ topics: [TOPIC.TASK_SHUFFLING_STARTED], fromBeginning: true });
 
   await tasksConsumer.run({
     eachBatchAutoResolve: false,
@@ -39,8 +39,8 @@ const initTasksConsumer = async () => {
 
       await heartbeat();
 
-      tasksConsumer.pause([{ topic: TOPIC.TASKS }]);
-      setTimeout(() => tasksConsumer.resume([{ topic: TOPIC.TASKS }]), 10000);
+      tasksConsumer.pause([{ topic: TOPIC.TASK_SHUFFLING_STARTED }]);
+      setTimeout(() => tasksConsumer.resume([{ topic: TOPIC.TASK_SHUFFLING_STARTED }]), 10000);
     }
   });
 };

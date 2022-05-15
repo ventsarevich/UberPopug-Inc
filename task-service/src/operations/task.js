@@ -1,22 +1,23 @@
+const { v4: uuidv4 } = require('uuid');
+const { validateEvent } = require('@ventsarevich/shema-registry');
+
 const { ROLE } = require('../constants/role');
 const taskService = require('../services/task');
 const userService = require('../services/user');
 const { TOPIC } = require('../constants/topic');
 const { STATUS } = require('../constants/status');
 const { sendMessages } = require('../queue/producer');
-const { CUD_EVENT, BUSINESS_EVENT, CONSUMING_EVENT } = require('../constants/event');
 const { USER_STATUS } = require('../constants/userStatus');
+const { CUD_EVENT, BUSINESS_EVENT, CONSUMING_EVENT } = require('../constants/event');
 
 const reassignTasks = async (tasksQuery) => {
   const tasksForReassign = await taskService.find(tasksQuery);
   if (!tasksForReassign.length) return null;
-  console.log(tasksForReassign);
 
   const availableUsers = await userService.distinct(
     'publicId',
     { role: ROLE.USER, status: USER_STATUS.ACTIVE }
   );
-  console.log(availableUsers);
   if (!availableUsers.length) return null;
 
   const events = await Promise.all(tasksForReassign.map(async (task) => {
@@ -24,13 +25,28 @@ const reassignTasks = async (tasksQuery) => {
 
     await taskService.update({ _id: task._id, assignee });
 
-    return {
+    const event = {
+      id: uuidv4(),
+      version: 1,
+      time: new Date(),
+      producer: 'task-service-producer',
       type: CUD_EVENT.TASK_UPDATED,
-      data: { publicId: task.publicId, assignee: task.assignee }
+      data: {
+        publicId: task.publicId,
+        assignee_public_id: task.assignee
+      }
     };
+
+    const { isValid, error } = validateEvent(event);
+    if (isValid) {
+      return event;
+    } else {
+      console.log(`${CUD_EVENT.TASK_UPDATED} send is rejected`, error);
+      return null;
+    }
   }));
 
-  return sendMessages(TOPIC.TASKS_STREAM, events);
+  return sendMessages(TOPIC.TASKS_STREAM, events.filter((e) => !!e));
 };
 
 const reassignTaskForUser = async (user) => {
@@ -69,16 +85,25 @@ const createTask = async ({ description, assignee, creator }) => {
   const createdTask = await taskService.create({ description, assignee, creator });
 
   const event = {
+    id: uuidv4(),
+    version: 1,
+    time: new Date(),
+    producer: 'task-service-producer',
     type: BUSINESS_EVENT.TASK_ADDED,
     data: {
       publicId: createdTask.publicId,
       description: createdTask.description,
-      assignee: createdTask.assignee,
-      creator: createdTask.creator
+      assignee_public_id: createdTask.assignee,
+      creator_public_id: createdTask.creator
     }
   };
 
-  return sendMessages(TOPIC.TASKS, [event]);
+  const { isValid, error } = validateEvent(event);
+  if (isValid) {
+    await sendMessages(TOPIC.TASKS_ADDED, [event]);
+  } else {
+    console.log(`${BUSINESS_EVENT.TASK_ADDED} send is rejected`, error);
+  }
 };
 
 const updateTask = async (payload) => {
@@ -88,6 +113,10 @@ const updateTask = async (payload) => {
   await taskService.update(payload);
 
   const event = {
+    id: uuidv4(),
+    version: 1,
+    time: new Date(),
+    producer: 'task-service-producer',
     type: CUD_EVENT.TASK_UPDATED,
     data: {
       publicId: task.publicId,
@@ -95,16 +124,30 @@ const updateTask = async (payload) => {
     }
   };
 
-  return sendMessages(TOPIC.TASKS_STREAM, [event]);
+  const { isValid, error } = validateEvent(event);
+  if (isValid) {
+    await sendMessages(TOPIC.TASKS_STREAM, [event]);
+  } else {
+    console.log(`${CUD_EVENT.TASK_UPDATED} send is rejected`, error);
+  }
 };
 
-const shuffleTask = (emitter) => {
+const shuffleTask = async (emitter) => {
   const event = {
+    id: uuidv4(),
+    version: 1,
+    time: new Date(),
+    producer: 'task-service-producer',
     type: BUSINESS_EVENT.TASK_SHUFFLING_STARTED,
     data: { emitter }
   };
 
-  return sendMessages(TOPIC.TASKS, [event]);
+  const { isValid, error } = validateEvent(event);
+  if (isValid) {
+    await sendMessages(TOPIC.TASK_SHUFFLING_STARTED, [event]);
+  } else {
+    console.log(`${BUSINESS_EVENT.TASK_SHUFFLING_STARTED} send is rejected`, error);
+  }
 };
 
 const processQueueMessages = async (messages) => {
@@ -128,11 +171,20 @@ const completeTask = async (taskId, publicId) => {
   await taskService.update({ _id: taskId, status: STATUS.COMPLETED });
 
   const event = {
+    id: uuidv4(),
+    version: 1,
+    time: new Date(),
+    producer: 'task-service-producer',
     type: BUSINESS_EVENT.TASK_COMPLETED,
     data: { publicId }
   };
 
-  return sendMessages(TOPIC.TASKS, [event]);
+  const { isValid, error } = validateEvent(event);
+  if (isValid) {
+    await sendMessages(TOPIC.TASKS_COMPLETED, [event]);
+  } else {
+    console.log(`${BUSINESS_EVENT.TASK_COMPLETED} send is rejected`, error);
+  }
 };
 
 module.exports = {

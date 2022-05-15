@@ -4,6 +4,7 @@
   "main": "app.js",
   "dependencies": {
     "@koa/router": "^10.1.1",
+    "@ventsarevich/shema-registry": "1.0.5",
     "axios": "^0.27.2",
     "jsonwebtoken": "^8.5.1",
     "kafkajs": "^2.0.0",
