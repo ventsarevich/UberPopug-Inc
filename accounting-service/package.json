@@ -1,0 +1,34 @@
+{
+  "name": "accounting-service",
+  "version": "1.0.0",
+  "main": "app.js",
+  "dependencies": {
+    "@koa/router": "^10.1.1",
+    "@ventsarevich/shema-registry": "1.0.6",
+    "axios": "^0.27.2",
+    "jsonwebtoken": "^8.5.1",
+    "kafkajs": "^2.0.0",
+    "koa": "^2.13.4",
+    "koa-bodyparser": "^4.3.0",
+    "koa-ejs": "^4.3.0",
+    "koa-error-ejs": "^0.0.2",
+    "koa-logger": "^3.2.1",
+    "koa-router": "^10.1.1",
+    "koa-session": "^6.2.0",
+    "mongoose": "^6.3.2",
+    "monk": "^7.3.4",
+    "node-cron": "^3.0.0",
+    "redis": "^4.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16"
+  },
+  "scripts": {
+    "start": "node src/app.js",
+    "start:dev": "nodemon node src/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
