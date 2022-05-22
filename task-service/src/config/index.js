@@ -1,7 +1,7 @@
 const config = {
   PORT: process.env.PORT || 8010,
-  CLIENT_ID: process.env.CLIENT_ID || '627566712e1fdc063a8fbe32',
-  CLIENT_SECRET: process.env.CLIENT_SECRET || 'tasks-secret',
+  CLIENT_ID: process.env.CLIENT_ID || '628a0d9f84f043280d8e797c',
+  CLIENT_SECRET: process.env.CLIENT_SECRET || 'task-secret',
   DB_CONNECTION_URL: process.env.DB_CONNECTION_URL || 'mongodb://admin:admin@localhost:27019/task-service?authSource=admin',
   SESSION_SECRET: process.env.SESSION_SECRET || 'task-session-secret',
   SSO_SERVER_URL: process.env.SSO_SERVER_URL || 'http://localhost:8000/sso/login',

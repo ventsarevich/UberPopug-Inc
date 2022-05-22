@@ -1,6 +1,4 @@
-# Auth service
-
-This service is used as SSO service
+# Accounting service
 
 ## Run
 

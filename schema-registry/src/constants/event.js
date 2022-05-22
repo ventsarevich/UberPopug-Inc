@@ -11,4 +11,12 @@ const TASK_EVENT = {
   TASK_SHUFFLING_STARTED: 'TaskShufflingStarted'
 };
 
-module.exports = { USER_EVENT, TASK_EVENT };
+const PRICE_EVENT = {
+  PRICE_CREATED: 'PriceCreated'
+};
+
+const BALANCE_EVENT = {
+  BALANCE_UPDATED: 'BalanceUpdated'
+};
+
+module.exports = { USER_EVENT, TASK_EVENT, PRICE_EVENT, BALANCE_EVENT };

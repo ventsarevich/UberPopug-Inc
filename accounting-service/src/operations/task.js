@@ -1,11 +1,44 @@
+const { v4: uuidv4 } = require('uuid');
+const { validateEvent } = require('@ventsarevich/shema-registry');
+
 const producer = require('../queue/producer');
 const userService = require('../services/user');
 const taskService = require('../services/task');
-const auditLogService = require('../services/audit-log');
 const { TOPIC } = require('../constants/topic');
-const { CONSUMING_EVENT } = require('../constants/event');
+const { sendMessages } = require('../queue/producer');
 const { STATUS } = require('../constants/task-status');
 const { TYPE } = require('../constants/audit-log-type');
+const auditLogService = require('../services/audit-log');
+const { CONSUMING_EVENT, CUD_EVENT } = require('../constants/event');
+const { changeBalance } = require('./user');
+
+const createTask = async (payload) => {
+  const task = await taskService.create(payload);
+
+  const event = {
+    id: uuidv4(),
+    version: 1,
+    time: new Date(),
+    producer: 'accounting-service-producer',
+    type: CUD_EVENT.PRICE_CREATED,
+    data: {
+      taskPublicId: task.publicId,
+      cost: task.cost,
+      fee: task.fee
+    }
+  };
+
+  console.log(event);
+
+  const { isValid, error } = validateEvent(event);
+  if (isValid) {
+    await sendMessages(TOPIC.PRICES_STREAM, [event]);
+  } else {
+    console.log(`${CUD_EVENT.PRICE_CREATED} send is rejected`, error);
+  }
+
+  return task;
+};
 
 const addTask = async (value) => {
   const assignee = await userService.findOne({ publicId: value.data.assignee_public_id });
@@ -22,7 +55,7 @@ const addTask = async (value) => {
   const exists = await taskService.exists({ publicId: value.data.publicId });
   if (exists) return null;
 
-  const task = await taskService.create({
+  const task = await createTask({
     publicId: value.data.publicId,
 
     description: value.data.description,
@@ -33,7 +66,7 @@ const addTask = async (value) => {
   });
 
   return Promise.all([
-    userService.addBalance(creator._id, -task.fee),
+    changeBalance(creator._id, -task.fee),
     auditLogService.create({
       userId: creator._id,
       taskId: task._id,
@@ -50,7 +83,7 @@ const completeTask = async (value) => {
   if (task.status === STATUS.COMPLETED) return null;
 
   return Promise.all([
-    userService.addBalance(task.assignee, task.cost),
+    changeBalance(task.assignee, task.cost),
     taskService.update({ _id: task._id, status: STATUS.COMPLETED }),
     auditLogService.create({
       userId: task.assignee,
