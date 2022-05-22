@@ -6,7 +6,7 @@ const config = {
   SESSION_SECRET: process.env.SESSION_SECRET || 'task-session-secret',
   SSO_SERVER_URL: process.env.SSO_SERVER_URL || 'http://localhost:8000/sso/login',
   SSO_SERVER_AUTHENTICATION_URL: process.env.SSO_SERVER_URL || 'http://localhost:8000/sso/verify',
-  KAFKA_CLIENT_ID: process.env.KAFKA_CLIENT_ID || 'auth-service',
+  KAFKA_CLIENT_ID: process.env.KAFKA_CLIENT_ID || 'task-service',
   KAFKA_BROKER_URL: process.env.KAFKA_BROKER_URL || 'localhost:9092',
   KAFKA_USERS_CONSUMER_GROUP_ID: process.env.KAFKA_CONSUMER_GROUP_ID || 'task-service-users-consumer',
   KAFKA_TASKS_CONSUMER_GROUP_ID: process.env.KAFKA_CONSUMER_GROUP_ID || 'task-service-tasks-consumer'

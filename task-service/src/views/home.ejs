@@ -73,7 +73,7 @@
     <% for (var task of tasks) { %>
         <tr id="<%= task._id; %>">
             <th scope="row"><%= task._id; %></th>
-            <td><%= task.description; %></td>
+            <td><%= `[${task.jiraId}] - ${task.description}`; %></td>
             <td><%= task.status; %></td>
             <td><%= task.creator.username; %></td>
             <td><%= task.assignee.username; %></td>

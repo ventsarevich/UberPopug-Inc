@@ -1,3 +1,6 @@
+const { v4: uuidv4 } = require('uuid');
+const { validateEvent } = require('@ventsarevich/shema-registry');
+
 const userService = require('../services/user');
 const { TOPIC } = require('../constants/topic');
 const { sendMessages } = require('../queue/kafka');
@@ -10,11 +13,20 @@ const deleteUser = async (_id) => {
   const deletedUser = await userService.remove(_id);
 
   const event = {
+    id: uuidv4(),
+    version: 1,
+    time: new Date(),
+    producer: 'auth-service-producer',
     type: CUD_EVENT.USER_DELETED,
     data: { publicId: user.publicId }
   };
 
-  await sendMessages(TOPIC.USERS_STREAM, [event]);
+  const { isValid, error } = validateEvent(event);
+  if (isValid) {
+    await sendMessages(TOPIC.USERS_STREAM, [event]);
+  } else {
+    console.log(`${CUD_EVENT.USER_DELETED} send is rejected`, error);
+  }
 
   return deletedUser;
 };
@@ -25,13 +37,24 @@ const updateUser = async (payload) => {
 
   await userService.update(payload);
 
+  console.log(user.role);
+  console.log(payload.role);
   if (user.role !== payload.role) {
     const event = {
+      id: uuidv4(),
+      version: 1,
+      time: new Date(),
+      producer: 'auth-service-producer',
       type: BUSINESS_EVENT.USER_ROLE_CHANGED,
       data: { publicId: user.publicId, role: payload.role }
     };
 
-    await sendMessages(TOPIC.USERS, [event]);
+    const { isValid, error } = validateEvent(event);
+    if (isValid) {
+      await sendMessages(TOPIC.USERS_ROLE_CHANGED, [event]);
+    } else {
+      console.log(`${BUSINESS_EVENT.USER_ROLE_CHANGED} send is rejected`, error);
+    }
   }
 
   return user;
@@ -46,6 +69,10 @@ const createUser = async ({ password, confirmationPassword, email, username }) =
   const createdUser = await userService.create({ username, password, email });
 
   const event = {
+    id: uuidv4(),
+    version: 1,
+    time: new Date(),
+    producer: 'auth-service-producer',
     type: CUD_EVENT.USER_CREATED,
     data: {
       publicId: createdUser.publicId,
@@ -55,7 +82,12 @@ const createUser = async ({ password, confirmationPassword, email, username }) =
     }
   };
 
-  await sendMessages(TOPIC.USERS_STREAM, [event]);
+  const { isValid, error } = validateEvent(event);
+  if (isValid) {
+    await sendMessages(TOPIC.USERS_STREAM, [event]);
+  } else {
+    console.log(`${CUD_EVENT.USER_CREATED} send is rejected`, error);
+  }
 
   return createdUser;
 };

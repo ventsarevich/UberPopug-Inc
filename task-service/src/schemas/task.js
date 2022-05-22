@@ -6,6 +6,8 @@ const Task = new mongoose.Schema({
   _id: { type: String, required: true },
   publicId: { type: String, required: true },
 
+  jiraId: { type: Number, required: true },
+
   description: { type: String, required: true },
   status: { type: String, required: true, enum: Object.values(STATUS), default: STATUS.CREATED },
 

@@ -18,3 +18,4 @@ Default port: 8010
 4. Use mongo streams to produce events to kafka instead of producing event form controllers
 5. Validation
 6. Logs
+7. Use separated Queue to self-consume
