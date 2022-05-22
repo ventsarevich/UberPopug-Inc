@@ -4,12 +4,9 @@ const CONSUMING_EVENT = {
   USER_CREATED: 'UserCreated',
   TASK_ADDED: 'TaskAdded',
   TASK_COMPLETED: 'TaskCompleted',
-  TASK_UPDATED: 'TaskUpdated'
-};
-
-const CUD_EVENT = {
+  TASK_UPDATED: 'TaskUpdated',
   PRICE_CREATED: 'PriceCreated',
   BALANCE_UPDATED: 'BalanceUpdated'
 };
 
-module.exports = { CONSUMING_EVENT, CUD_EVENT };
+module.exports = { CONSUMING_EVENT };

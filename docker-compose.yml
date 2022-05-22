@@ -66,14 +66,14 @@ services:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: admin
 
-  auth-service-mongodb-setup:
-    image: mongo:latest
-    container_name: auth-service-mongodb-setup
-    volumes:
-      - ./auth-service/dump:/dump
-    entrypoint: [ "mongorestore", "--uri", "mongodb://admin:admin@auth-service-mongodb:27017/auth-service?authSource=admin", "/dump" ]
-    depends_on:
-      - auth-service-mongodb
+  #  auth-service-mongodb-setup:
+  #    image: mongo:latest
+  #    container_name: auth-service-mongodb-setup
+  #    volumes:
+  #      - ./auth-service/dump:/dump
+  #    entrypoint: [ "mongorestore", "--uri", "mongodb://admin:admin@auth-service-mongodb:27017/auth-service?authSource=admin", "/dump" ]
+  #    depends_on:
+  #      - auth-service-mongodb
 
   task-service-mongodb:
     image: mongo:latest
@@ -84,14 +84,14 @@ services:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: admin
 
-  task-service-mongodb-setup:
-    image: mongo:latest
-    container_name: task-service-mongodb-setup
-    volumes:
-      - ./task-service/dump:/dump
-    entrypoint: [ "mongorestore", "--uri", "mongodb://admin:admin@task-service-mongodb:27017/task-service?authSource=admin", "/dump" ]
-    depends_on:
-      - task-service-mongodb
+  #  task-service-mongodb-setup:
+  #    image: mongo:latest
+  #    container_name: task-service-mongodb-setup
+  #    volumes:
+  #      - ./task-service/dump:/dump
+  #    entrypoint: [ "mongorestore", "--uri", "mongodb://admin:admin@task-service-mongodb:27017/task-service?authSource=admin", "/dump" ]
+  #    depends_on:
+  #      - task-service-mongodb
 
   accounting-service-mongodb:
     image: mongo:latest
@@ -102,11 +102,20 @@ services:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: admin
 
-  accounting-service-mongodb-setup:
+  #  accounting-service-mongodb-setup:
+  #    image: mongo:latest
+  #    container_name: accounting-service-mongodb-setup
+  #    volumes:
+  #      - ./accounting-service/dump:/dump
+  #    entrypoint: [ "mongorestore", "--uri", "mongodb://admin:admin@accounting-service-mongodb:27017/accounting-service?authSource=admin", "/dump" ]
+  #    depends_on:
+  #      - accounting-service-mongodb
+
+  analytics-service-mongodb:
     image: mongo:latest
-    container_name: accounting-service-mongodb-setup
-    volumes:
-      - ./accounting-service/dump:/dump
-    entrypoint: [ "mongorestore", "--uri", "mongodb://admin:admin@accounting-service-mongodb:27017/accounting-service?authSource=admin", "/dump" ]
-    depends_on:
-      - accounting-service-mongodb
+    container_name: analytics-service-mongodb
+    ports:
+      - '27021:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin

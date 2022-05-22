@@ -1,6 +1,6 @@
 const config = {
   PORT: process.env.PORT || 8020,
-  CLIENT_ID: process.env.CLIENT_ID || '6280e1b711012edacd5f587c',
+  CLIENT_ID: process.env.CLIENT_ID || '628a0f5248385b2847e1b070',
   CLIENT_SECRET: process.env.CLIENT_SECRET || 'accounting-secret',
   DB_CONNECTION_URL: process.env.DB_CONNECTION_URL || 'mongodb://admin:admin@localhost:27020/accounting-service?authSource=admin',
   SESSION_SECRET: process.env.SESSION_SECRET || 'accounting-session-secret',

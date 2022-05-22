@@ -4,7 +4,6 @@ const TOPIC = {
   TASKS_ADDED: 'tasks.added',
   TASKS_COMPLETED: 'tasks.completed',
   TASKS_STREAM: 'tasks.stream',
-  ACCOUNTING_RETRY: 'accounting.retry',
   PRICES_STREAM: 'prices.stream',
   BALANCES_STREAM: 'balances.stream'
 };

@@ -5,7 +5,9 @@ const EVENT = {
   TASK_UPDATED: 'TaskUpdated',
   TASK_ADDED: 'TaskAdded',
   TASK_COMPLETED: 'TaskCompleted',
-  TASK_SHUFFLING_STARTED: 'TaskShufflingStarted'
+  TASK_SHUFFLING_STARTED: 'TaskShufflingStarted',
+  PRICE_CREATED: 'PriceCreated',
+  BALANCE_UPDATED: 'BalanceUpdated'
 };
 
 const PATH = {
@@ -15,7 +17,9 @@ const PATH = {
   [EVENT.TASK_UPDATED]: 'tasks/updated',
   [EVENT.TASK_ADDED]: 'tasks/added',
   [EVENT.TASK_COMPLETED]: 'tasks/completed',
-  [EVENT.TASK_SHUFFLING_STARTED]: 'tasks/shuffling-started'
+  [EVENT.TASK_SHUFFLING_STARTED]: 'tasks/shuffling-started',
+  [EVENT.PRICE_CREATED]: 'prices/created',
+  [EVENT.BALANCE_UPDATED]: 'balance/updated'
 };
 
 module.exports = { PATH };
